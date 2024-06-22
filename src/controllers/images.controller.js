@@ -14,6 +14,7 @@ class ImageController {
       const { w, h } = req.query;
       const cropSize = req.query?.crop_size || 'auto';
       const quality = +req.query?.quality || 80;
+      const format = req.query?.format || 'avif';
 
       const imagePath = path.join(__dirname, 'src/public/images', type, name);
 
@@ -29,16 +30,23 @@ class ImageController {
         return res.send(Buffer.from(cachedImage, 'binary'));
       }
 
-      const image = sharp(imagePath);
+      const image = sharp(imagePath, { unlimited: true });
       const metadata = await image.metadata();
 
       let imageBuffer;
       if (w && h && cropSize.toLowerCase() == 'exactly') {
         imageBuffer = await image
-          .resize(parseInt(w), parseInt(h))
-          .avif({
+          .resize({
+            width: parseInt(w),
+            height: parseInt(h),
+            withoutEnlargement: true,
+          })
+          .toFormat(format, {
             quality: quality,
             chromaSubsampling: '4:4:4',
+            progressive: true,
+            tile: true,
+            pyramid: true,
           })
           .toBuffer();
       } else if (w) {
@@ -47,10 +55,17 @@ class ImageController {
           (newWidth / metadata.width) * metadata.height
         );
         imageBuffer = await image
-          .resize(newWidth, newHeight)
-          .avif({
+          .resize({
+            width: newWidth,
+            height: newHeight,
+            withoutEnlargement: true,
+          })
+          .toFormat(format, {
             quality: quality,
             chromaSubsampling: '4:4:4',
+            progressive: true,
+            tile: true,
+            pyramid: true,
           })
           .toBuffer();
       } else if (h) {
@@ -59,17 +74,27 @@ class ImageController {
           (newHeight / metadata.height) * metadata.width
         );
         imageBuffer = await image
-          .resize(newWidth, newHeight)
-          .avif({
+          .resize({
+            width: newWidth,
+            height: newHeight,
+            withoutEnlargement: true,
+          })
+          .toFormat(format, {
             quality: quality,
             chromaSubsampling: '4:4:4',
+            progressive: true,
+            tile: true,
+            pyramid: true,
           })
           .toBuffer();
       } else {
         imageBuffer = await image
-          .avif({
+          .toFormat(format, {
             quality: quality,
             chromaSubsampling: '4:4:4',
+            progressive: true,
+            tile: true,
+            pyramid: true,
           })
           .toBuffer();
         // return res.sendFile(imagePath);
