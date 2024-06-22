@@ -1,11 +1,12 @@
 import createHttpError from 'http-errors';
-import videoRouter from './video.js';
-import imageRouter from './image.js';
-import ErrorHandler from '../controllers/errorController.js';
+import videosRouter from './video.route.js';
+import imageRouter from './image.route.js';
+import ErrorHandler from '../controllers/error.controller.js';
 
 export default function route(app) {
-  app.use('/videos', videoRouter);
-  app.use('/images', imageRouter);
+  app.use('/image', imageRouter);
+  app.use('/videos', videosRouter.Get);
+  app.use('/video', videosRouter.Service);
   app.all('*', (req, res, next) => {
     return next(
       createHttpError(
