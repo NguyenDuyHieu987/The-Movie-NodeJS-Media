@@ -32,6 +32,13 @@ class ImageController {
 
       const image = sharp(imagePath, { unlimited: true });
       const metadata = await image.metadata();
+      const sharpOption = {
+        quality: quality,
+        chromaSubsampling: '4:4:4',
+        progressive: true,
+        tile: true,
+        pyramid: true,
+      };
 
       let imageBuffer;
       if (w && h && cropSize.toLowerCase() == 'exactly') {
@@ -41,13 +48,7 @@ class ImageController {
             height: parseInt(h),
             withoutEnlargement: true,
           })
-          .toFormat(format, {
-            quality: quality,
-            chromaSubsampling: '4:4:4',
-            progressive: true,
-            tile: true,
-            pyramid: true,
-          })
+          .toFormat(format, sharpOption)
           .toBuffer();
       } else if (w) {
         const newWidth = parseInt(w);
@@ -60,13 +61,7 @@ class ImageController {
             height: newHeight,
             withoutEnlargement: true,
           })
-          .toFormat(format, {
-            quality: quality,
-            chromaSubsampling: '4:4:4',
-            progressive: true,
-            tile: true,
-            pyramid: true,
-          })
+          .toFormat(format, sharpOption)
           .toBuffer();
       } else if (h) {
         const newHeight = parseInt(h);
@@ -79,24 +74,10 @@ class ImageController {
             height: newHeight,
             withoutEnlargement: true,
           })
-          .toFormat(format, {
-            quality: quality,
-            chromaSubsampling: '4:4:4',
-            progressive: true,
-            tile: true,
-            pyramid: true,
-          })
+          .toFormat(format, sharpOption)
           .toBuffer();
       } else {
-        imageBuffer = await image
-          .toFormat(format, {
-            quality: quality,
-            chromaSubsampling: '4:4:4',
-            progressive: true,
-            tile: true,
-            pyramid: true,
-          })
-          .toBuffer();
+        imageBuffer = await image.toFormat(format, sharpOption).toBuffer();
         // return res.sendFile(imagePath);
       }
 
