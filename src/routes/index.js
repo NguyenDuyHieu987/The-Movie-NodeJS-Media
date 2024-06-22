@@ -4,6 +4,23 @@ import imageRouter from './image.route.js';
 import ErrorHandler from '../controllers/error.controller.js';
 
 export default function route(app) {
+  app.use((req, res, next) => {
+    const proxyAuthHeader = req.headers['x-proxy-auth'];
+    const apiKey = req.headers['x-api-key'];
+    const requestIP = req.ip || req.connection.remoteAddress;
+    console.log(requestIP);
+
+    if (
+      proxyAuthHeader !== 'my-proxy-key'
+      // apiKey !== validApiKey ||
+      // requestIP !== allowedProxyIP
+      // process.env.NODE_ENV == 'production'
+    ) {
+      return res.status(403).send('Forbidden: Access is denined.');
+    }
+
+    next();
+  });
   app.use('/image', imageRouter);
   app.use('/videos', videosRouter.Get);
   app.use('/video', videosRouter.Service);
