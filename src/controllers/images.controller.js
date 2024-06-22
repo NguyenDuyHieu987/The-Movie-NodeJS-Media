@@ -36,7 +36,7 @@ class ImageController {
       if (w && h && cropSize.toLowerCase() == 'exactly') {
         imageBuffer = await image
           .resize(parseInt(w), parseInt(h))
-          .jpeg({
+          .avif({
             quality: quality,
             chromaSubsampling: '4:4:4',
           })
@@ -48,7 +48,7 @@ class ImageController {
         );
         imageBuffer = await image
           .resize(newWidth, newHeight)
-          .jpeg({
+          .avif({
             quality: quality,
             chromaSubsampling: '4:4:4',
           })
@@ -60,14 +60,14 @@ class ImageController {
         );
         imageBuffer = await image
           .resize(newWidth, newHeight)
-          .jpeg({
+          .avif({
             quality: quality,
             chromaSubsampling: '4:4:4',
           })
           .toBuffer();
       } else {
         imageBuffer = await image
-          .jpeg({
+          .avif({
             quality: quality,
             chromaSubsampling: '4:4:4',
           })
