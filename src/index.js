@@ -28,7 +28,10 @@ process.on('exit', () => {
 const app = express();
 
 app.use(
-  cors()
+  cors({
+    origin: '*',
+    credentials: true,
+  })
   //   {
   //   origin: [
   //     process.env.NODE_ENV != 'production' && 'http://localhost:3000',
