@@ -41,7 +41,7 @@ class VideoController {
       }
 
       if (!fs.existsSync(videoPath)) {
-        return res.status(404).send('Video not found');
+        return res.status(404).send('Video not found.');
       }
 
       res.setHeader('Content-Type', 'video/application/vnd.apple.mpegurl');

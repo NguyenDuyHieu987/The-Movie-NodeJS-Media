@@ -15,17 +15,15 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import compression from 'compression';
 import multer from 'multer';
-// import RedisCache from './config/redis';
+import RedisCache from './config/redis/index.js';
 import route from './routes/index.js';
 dotenv.config();
 
-// const redisCache = new RedisCache();
+RedisCache.connect();
 
-// redisCache.connect();
-
-// process.on('exit', () => {
-//   redisCache.quit();
-// });
+process.on('exit', () => {
+  RedisCache.quit();
+});
 
 const app = express();
 

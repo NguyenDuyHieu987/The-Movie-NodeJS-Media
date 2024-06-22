@@ -1,9 +1,13 @@
 import express from 'express';
-import Image from '../controllers/imageService.controller.js';
+import Image from '../controllers/images.controller.js';
+import ImageService from '../controllers/imageService.controller.js';
 
-const router = express.Router();
+const Get = express.Router();
 
-router.post('/upload', Image.upload);
-router.get('/upload1', Image.upload);
+Get.get('/:type/*', Image.Get);
 
-export default router;
+const Service = express.Router();
+
+Service.post('/upload', ImageService.upload);
+
+export default { Get, Service };
