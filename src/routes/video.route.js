@@ -4,8 +4,7 @@ import VideoService from '../controllers/videoService.controller.js';
 
 const Get = express.Router();
 
-Get.get('/:type/:name', Video.get);
-Get.get('/playback/*', Video.playback);
+Get.get('/:type/*', Video.get);
 Get.get('/*', Video.getWwildcard);
 
 const Service = express.Router();
