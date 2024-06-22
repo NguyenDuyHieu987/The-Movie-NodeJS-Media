@@ -57,7 +57,7 @@ class ImageController {
         cacheKey,
         +process.env.REDIS_CACHE_IMAGE_TIME,
         resizedImageBuffer.toString('binary')
-      ); // Cache trong 1 giờ
+      );
 
       res.type('image/jpeg');
       res.send(resizedImageBuffer);

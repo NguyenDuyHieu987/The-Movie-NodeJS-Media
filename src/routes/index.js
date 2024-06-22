@@ -20,7 +20,7 @@ export default function route(app) {
   );
   app.use(
     '/videos',
-    cache(process.env.REDIS_CACHE_VIDEO_TIME),
+    cache(process.env.REDIS_CACHE_VIDEO_TIM.toString()),
     videosRouter.Get
   );
   app.use(proxyHandler);
