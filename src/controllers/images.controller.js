@@ -31,12 +31,11 @@ class ImageController {
       const metadata = await image.metadata();
 
       let resizedImageBuffer;
-      // if (w && h) {
-      //   resizedImageBuffer = await image
-      //     .resize(parseInt(w), parseInt(h))
-      //     .toBuffer();
-      // }
-      if (w) {
+      if (w && h) {
+        resizedImageBuffer = await image
+          .resize(parseInt(w), parseInt(h))
+          .toBuffer();
+      } else if (w) {
         const newWidth = parseInt(w);
         const newHeight = Math.round(
           (newWidth / metadata.width) * metadata.height
