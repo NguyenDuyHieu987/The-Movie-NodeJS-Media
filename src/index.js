@@ -27,6 +27,7 @@ process.on('exit', () => {
 
 const app = express();
 
+app.use('/static', express.static(path.join(__dirname, 'src/public')));
 app.use(
   cors({
     origin: [
@@ -41,7 +42,6 @@ app.use(
     credentials: true,
   })
 );
-app.use('/static', express.static(path.join(__dirname, 'src/public')));
 app.use(compression());
 // app.use(express.json());
 // app.use(
