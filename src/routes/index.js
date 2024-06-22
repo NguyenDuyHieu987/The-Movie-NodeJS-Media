@@ -6,9 +6,9 @@ import { proxyHandler } from '../middlewares/index.js';
 
 export default function route(app) {
   app.use('/images', imageRouter.Get);
+  app.use('/videos', videosRouter.Get);
   app.use(proxyHandler);
   app.use('/image', imageRouter.Service);
-  app.use('/videos', videosRouter.Get);
   app.use('/video', videosRouter.Service);
   app.all('*', (req, res, next) => {
     return next(
