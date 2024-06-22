@@ -15,7 +15,9 @@ const cacheWithRedis = apicache.options({
 export default function route(app) {
   app.use(
     '/images',
-    cacheWithRedis(`${parseInt(process.env.REDIS_CACHE_IMAGE_TIME / 3600)} hours`),
+    cacheWithRedis(
+      `${parseInt(process.env.REDIS_CACHE_IMAGE_TIME / 60)} minutes`
+    ),
     imageRouter.Get
   );
   app.use(
