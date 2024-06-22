@@ -12,6 +12,8 @@ class ImageController {
       const { type } = req.params;
       const name = req.params[0];
       const { w, h } = req.query;
+      const cropSize = req.query?.crop_size || 'auto';
+      const quality = +req.query?.quality || 80;
 
       const imagePath = path.join(__dirname, 'src/public/images', type, name);
 
@@ -30,36 +32,57 @@ class ImageController {
       const image = sharp(imagePath);
       const metadata = await image.metadata();
 
-      let resizedImageBuffer;
-      if (w && h) {
-        resizedImageBuffer = await image
+      let imageBuffer;
+      if (w && h && cropSize.toLowerCase() == 'exactly') {
+        imageBuffer = await image
           .resize(parseInt(w), parseInt(h))
+          .jpeg({
+            quality: quality,
+            chromaSubsampling: '4:4:4',
+          })
           .toBuffer();
       } else if (w) {
         const newWidth = parseInt(w);
         const newHeight = Math.round(
           (newWidth / metadata.width) * metadata.height
         );
-        resizedImageBuffer = await image.resize(newWidth, newHeight).toBuffer();
+        imageBuffer = await image
+          .resize(newWidth, newHeight)
+          .jpeg({
+            quality: quality,
+            chromaSubsampling: '4:4:4',
+          })
+          .toBuffer();
       } else if (h) {
         const newHeight = parseInt(h);
         const newWidth = Math.round(
           (newHeight / metadata.height) * metadata.width
         );
-        resizedImageBuffer = await image.resize(newWidth, newHeight).toBuffer();
+        imageBuffer = await image
+          .resize(newWidth, newHeight)
+          .jpeg({
+            quality: quality,
+            chromaSubsampling: '4:4:4',
+          })
+          .toBuffer();
       } else {
-        resizedImageBuffer = await image.toBuffer();
+        imageBuffer = await image
+          .jpeg({
+            quality: quality,
+            chromaSubsampling: '4:4:4',
+          })
+          .toBuffer();
         // return res.sendFile(imagePath);
       }
 
       RedisCache.redisClient().setEx(
         cacheKey,
         +process.env.REDIS_CACHE_IMAGE_TIME,
-        resizedImageBuffer.toString('binary')
+        imageBuffer.toString('binary')
       );
 
       res.type('image/jpeg');
-      res.send(resizedImageBuffer);
+      res.send(imageBuffer);
     } catch (err) {
       // res.status(500).send(`Something went wrong.<br/>${err}`);
       next(err);
