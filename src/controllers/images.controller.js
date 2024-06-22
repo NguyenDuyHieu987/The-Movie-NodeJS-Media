@@ -55,7 +55,7 @@ class ImageController {
 
       RedisCache.redisClient().setEx(
         cacheKey,
-        +process.env.REDIS_CACHE_TIME,
+        +process.env.REDIS_CACHE_IMAGE_TIME,
         resizedImageBuffer.toString('binary')
       ); // Cache trong 1 giờ
 

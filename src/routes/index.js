@@ -11,8 +11,18 @@ const cacheWithRedis = apicache.options({
 }).middleware;
 
 export default function route(app) {
-  app.use('/images', cacheWithRedis('1 hours'), imageRouter.Get);
-  app.use('/videos', cacheWithRedis('2 hours'), videosRouter.Get);
+  app.use(
+    '/images',
+    cacheWithRedis(
+      `${parseInt(process.env.REDIS_CACHE_IMAGE_TIME / 3600)} hours`
+    ),
+    imageRouter.Get
+  );
+  app.use(
+    '/videos',
+    cacheWithRedis(process.env.REDIS_CACHE_VIDEO_TIME),
+    videosRouter.Get
+  );
   app.use(proxyHandler);
   app.use('/image', imageRouter.Service);
   app.use('/video', videosRouter.Service);
