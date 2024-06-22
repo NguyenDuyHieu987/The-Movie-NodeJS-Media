@@ -9,7 +9,7 @@ import RedisCache from '../config/redis/index.js';
 const cache = apicache.middleware;
 
 const cacheWithRedis = apicache.options({
-  redisClient: RedisCache,
+  redisClient: RedisCache.redisClient(),
 }).middleware;
 
 export default function route(app) {
