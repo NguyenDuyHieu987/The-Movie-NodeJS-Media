@@ -37,6 +37,8 @@ class VideoController {
         return res.status(404).send('Video not found.');
       }
 
+      const videoSize = fs.statSync(videoPath).size || 0;
+
       const head = {
         'Content-Length': videoSize,
         'Content-Type': 'video/mp4',
@@ -45,10 +47,6 @@ class VideoController {
       res.setHeader('Content-Type', 'video/application/vnd.apple.mpegurl');
       res.setHeader('Content-Disposition', 'inline');
       fs.createReadStream(videoPath).pipe(res);
-
-      // let videoSize = 0;
-
-      // videoSize = fs.statSync(videoPath).size;
 
       // if (range) {
       //   const parts = range.replace(/bytes=/, '').split('-');
@@ -103,9 +101,7 @@ class VideoController {
         name
       );
 
-      videoSize = fs.statSync(videoPath).size;
-
-      let videoSize = 0;
+      const videoSize = fs.statSync(videoPath).size || 0;
 
       if (range) {
         const parts = range.replace(/bytes=/, '').split('-');
