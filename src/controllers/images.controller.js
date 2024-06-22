@@ -16,7 +16,7 @@ class ImageController {
       const imagePath = path.join(__dirname, 'src/public/images', type, name);
 
       if (!fs.existsSync(imagePath)) {
-        return res.status(404).json({ message: 'Image not found' });
+        return next(createHttpError.NotFound('Image not found'));
       }
 
       const cacheKey = req.originalUrl || `${type}-${name}-${w}x${h}`;

@@ -34,7 +34,7 @@ class VideoController {
       const videoFormat = partsName[1] || 'mp4';
 
       if (!fs.existsSync(videoPath)) {
-        return res.status(404).send('Video not found.');
+        return next(createHttpError.NotFound('Video not found'));
       }
 
       const videoSize = fs.statSync(videoPath).size || 0;
