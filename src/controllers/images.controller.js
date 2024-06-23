@@ -30,7 +30,7 @@ class ImageController {
         return res.send(Buffer.from(cachedImage, 'binary'));
       }
 
-      const image = sharp(imagePath, { unlimited: true });
+      const image = sharp(imagePath, { unlimited: false });
       const metadata = await image.metadata();
       const sharpOption = {
         quality: quality,
