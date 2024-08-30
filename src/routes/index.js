@@ -6,23 +6,25 @@ import ErrorHandler from '../controllers/error.controller.js';
 import { proxyHandler } from '../middlewares/index.js';
 import RedisCache from '../config/redis/index.js';
 
-const cache = apicache.middleware;
+let cache = apicache.middleware;
 
 const cacheWithRedis = apicache.options({
   redisClient: RedisCache.redisClient(),
 }).middleware;
 
+if (process.env.NODE_ENV == 'development') {
+  cache = cacheWithRedis;
+}
+
 export default function route(app) {
   app.use(
     '/images',
-    cacheWithRedis(
-      `${parseInt(process.env.REDIS_CACHE_IMAGE_TIME / 60)} minutes`
-    ),
+    cache(`${parseInt(process.env.REDIS_CACHE_IMAGE_TIME / 60)} minutes`),
     imageRouter.Get
   );
   app.use(
     '/videos',
-    cacheWithRedis(process.env.REDIS_CACHE_VIDEO_TIME?.toString()),
+    cache(process.env.REDIS_CACHE_VIDEO_TIME?.toString()),
     videosRouter.Get
   );
   app.use(proxyHandler);

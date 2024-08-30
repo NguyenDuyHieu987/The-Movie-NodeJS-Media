@@ -17,6 +17,7 @@ import compression from 'compression';
 import multer from 'multer';
 import RedisCache from './config/redis/index.js';
 import route from './routes/index.js';
+import favicon from 'serve-favicon';
 dotenv.config();
 
 RedisCache.connect();
@@ -41,6 +42,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(favicon(path.join(__dirname, 'src/public', 'favicon.ico')));
 app.use('/static', express.static(path.join(__dirname, 'src/public')));
 app.use(compression());
 // app.use(express.json());
