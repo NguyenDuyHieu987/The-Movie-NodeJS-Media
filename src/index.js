@@ -33,11 +33,11 @@ app.use(
     origin: [
       process.env.NODE_ENV != 'production' && 'http://localhost:3000',
       process.env.NODE_ENV != 'production' && 'http://localhost:8080',
-      'https://phimhay247z.org',
-      'https://dash.phimhay247z.org',
-      'https://dashboard.phimhay247z.org',
+      'https://' + process.env.CLIENT_DOMAIN,
+      'https://dash.' + process.env.CLIENT_DOMAIN,
+      'https://dashboard.' + process.env.CLIENT_DOMAIN,
       // www
-      'https://www.phimhay247z.org',
+      'https://www.' + process.env.CLIENT_DOMAIN,
     ],
     credentials: true,
   })
