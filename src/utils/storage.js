@@ -1,0 +1,79 @@
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { generateRandomString } from './index.js';
+const __dirname = path.resolve();
+
+const storageImage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const folder = req.body?.folder || req.params?.folder || req.query?.folder;
+
+    const uploadPath = path.join(__dirname, 'src/public/imagesTest', folder);
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    // Đặt tên file với định dạng "originalname-timestamp.ext"
+    // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    // cb(
+    //   null,
+    //   file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)
+    // );
+
+    cb(null, generateRandomString(30) + path.extname(file.originalname));
+  },
+});
+
+const storageArrayImage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    console.log(req.body);
+    console.log(file.files);
+    const index = parseInt(file.fieldname.match(/\d+/)[0]);
+    const item = JSON.parse(req.body[`data[${index}]`]);
+    const folder = item.folder;
+
+    const uploadPath = path.join(__dirname, 'src/public/imagesTest', folder);
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    // Đặt tên file với định dạng "originalname-timestamp.ext"
+    // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    // cb(
+    //   null,
+    //   file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)
+    // );
+
+    cb(null, generateRandomString(30) + path.extname(file.originalname));
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  const fileTypes = /jpeg|jpg|png/;
+  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = fileTypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb('Error: Only allow uploading image files (jpeg, jpg, png)');
+  }
+};
+
+export const uploadImage = multer({
+  storage: storageImage,
+  limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter: fileFilter,
+});
+
+export const uploadArrayImage = multer({
+  storage: storageArrayImage,
+  limits: { fileSize: 1024 * 1024 * 50 },
+  fileFilter: fileFilter,
+});

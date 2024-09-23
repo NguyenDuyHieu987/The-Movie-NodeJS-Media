@@ -17,6 +17,9 @@ if (process.env.NODE_ENV == 'development') {
 }
 
 export default function route(app) {
+  app.use('/image', imageRouter.Service);
+  app.use('/video', videosRouter.Service);
+  app.use(proxyHandler);
   app.use(
     '/images',
     cache(`${parseInt(process.env.REDIS_CACHE_IMAGE_TIME / 60)} minutes`),
@@ -27,9 +30,6 @@ export default function route(app) {
     cache(process.env.REDIS_CACHE_VIDEO_TIME?.toString()),
     videosRouter.Get
   );
-  app.use(proxyHandler);
-  app.use('/image', imageRouter.Service);
-  app.use('/video', videosRouter.Service);
   app.all('*', (req, res, next) => {
     return next(
       createHttpError(
