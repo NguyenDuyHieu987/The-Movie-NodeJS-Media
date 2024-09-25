@@ -16,6 +16,7 @@ import dotenv from 'dotenv';
 import compression from 'compression';
 import multer from 'multer';
 import RedisCache from './config/redis/index.js';
+import SocketService from './config/websocket/index.js';
 import route from './routes/index.js';
 import favicon from 'serve-favicon';
 dotenv.config();
@@ -62,10 +63,13 @@ app.use(
 
 const server = http.createServer(app);
 
+SocketService.initialize(server);
+
 route(app);
 
 const PORT = 5002;
 
 server.listen(process.env.PORT || PORT, () => {
+  console.log(process.env.NODE_ENV);
   console.log(`App is listening on port: ${PORT}`);
 });

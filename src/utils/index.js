@@ -101,3 +101,37 @@ export function generateRandomString(length = 30) {
 
   return result;
 }
+
+export function getFormattedNumberDateTime(
+  options = { from: 'year', to: 'second', join: '' }
+) {
+  const from = options?.from || 'year';
+  const to = options?.to || 'year';
+  const join = options?.join || '';
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  const parts = { year, month, day, hour, minutes, seconds };
+
+  const order = ['year', 'month', 'day', 'hour', 'minutes', 'seconds'];
+
+  const startIndex = order.indexOf(from);
+  const endIndex = order.indexOf(to);
+
+  if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
+    throw new Error('Invalid "from" or "to" values');
+  }
+
+  // Cắt và nối các phần tử theo thứ tự từ from đến to
+  const resultArray = order
+    .slice(startIndex, endIndex + 1)
+    .map((key) => parts[key]);
+
+  return resultArray.join(join);
+}

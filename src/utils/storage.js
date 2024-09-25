@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { generateRandomString } from './index.js';
+import { generateRandomString, getFormattedNumberDateTime } from './index.js';
 const __dirname = path.resolve();
 
 const storageImage = multer.diskStorage({
@@ -29,8 +29,6 @@ const storageImage = multer.diskStorage({
 
 const storageArrayImage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log(req.body);
-    console.log(file.files);
     const index = parseInt(file.fieldname.match(/\d+/)[0]);
     const item = JSON.parse(req.body[`data[${index}]`]);
     const folder = item.folder;
@@ -54,7 +52,7 @@ const storageArrayImage = multer.diskStorage({
   },
 });
 
-const fileFilter = (req, file, cb) => {
+const imageFilter = (req, file, cb) => {
   const fileTypes = /jpeg|jpg|png/;
   const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = fileTypes.test(file.mimetype);
@@ -69,11 +67,63 @@ const fileFilter = (req, file, cb) => {
 export const uploadImage = multer({
   storage: storageImage,
   limits: { fileSize: 1024 * 1024 * 5 },
-  fileFilter: fileFilter,
+  fileFilter: imageFilter,
 });
 
 export const uploadArrayImage = multer({
   storage: storageArrayImage,
   limits: { fileSize: 1024 * 1024 * 50 },
-  fileFilter: fileFilter,
+  fileFilter: imageFilter,
+});
+
+const storageVideo = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const extName = path.extname(file.originalname);
+    const originalFileName = file.originalname.replace(extName, '');
+
+    const now = new Date();
+
+    const uploadPath = path.join(
+      __dirname,
+      'src/public/videos-storage',
+      `${now.getFullYear()}`,
+      `${String(now.getMonth() + 1).padStart(2, '0')}`,
+      originalFileName +
+        '-' +
+        getFormattedNumberDateTime({ from: 'day', to: 'seconds', join: '.' })
+    );
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = getFormattedNumberDateTime({ to: 'seconds' });
+    const extName = path.extname(file.originalname);
+    cb(
+      null,
+      file.originalname.replace(extName, '') + '_' + uniqueSuffix + extName
+    );
+  },
+});
+
+const viceoFilter = (req, file, cb) => {
+  const fileTypes = /mp4|avi|mkv|mov|webm|flv|wmv/;
+  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = fileTypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb(
+      'Error: Only allow uploading video files (mp4, avi, mkv, mov, webm, flv, wmv)'
+    );
+  }
+};
+
+export const uploadVideo = multer({
+  storage: storageVideo,
+  //   limits: { fileSize: 1024 * 1024 * 50 },
+  fileFilter: viceoFilter,
 });
