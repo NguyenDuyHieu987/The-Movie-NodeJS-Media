@@ -14,7 +14,7 @@ class ImageController {
       const { w, h } = req.query;
       const cropSize = req.query?.crop_size || 'auto';
       const quality = +req.query?.quality || 80;
-      const format = req.query?.format || 'avif';
+      const format = req.query?.format || 'jpg';
 
       const imagePath = path.join(__dirname, 'src/public/images', type, name);
 
