@@ -40,8 +40,8 @@ class ImageController {
         quality: quality,
         chromaSubsampling: '4:4:4',
         progressive: true,
-        tile: true,
-        pyramid: true,
+        // tile: true,
+        // pyramid: true,
       };
 
       let imageBuffer;
@@ -50,39 +50,53 @@ class ImageController {
           .resize({
             width: parseInt(w),
             height: parseInt(h),
+            fit: sharp.fit.cover, // Dùng crop nếu cần chính xác
             withoutEnlargement: true,
           })
           .toFormat(format, sharpOption)
           .toBuffer();
-      } else if (w) {
-        const newWidth = parseInt(w);
-        const newHeight = Math.round(
-          (newWidth / metadata.width) * metadata.height
-        );
+      } else if (w || h) {
+        // Resize theo chiều đơn lẻ
         imageBuffer = await image
           .resize({
-            width: newWidth,
-            height: newHeight,
+            width: w ? parseInt(w) : null,
+            height: h ? parseInt(h) : null,
+            fit: sharp.fit.inside, // Giữ tỉ lệ aspect ratio
             withoutEnlargement: true,
           })
           .toFormat(format, sharpOption)
           .toBuffer();
-      } else if (h) {
-        const newHeight = parseInt(h);
-        const newWidth = Math.round(
-          (newHeight / metadata.height) * metadata.width
-        );
-        imageBuffer = await image
-          .resize({
-            width: newWidth,
-            height: newHeight,
-            withoutEnlargement: true,
-          })
-          .toFormat(format, sharpOption)
-          .toBuffer();
-      } else {
-        imageBuffer = await image.toFormat(format, sharpOption).toBuffer();
-        // return res.sendFile(imagePath);
+      }
+      // else if (w) {
+      //   const newWidth = parseInt(w);
+      //   const newHeight = Math.round(
+      //     (newWidth / metadata.width) * metadata.height
+      //   );
+      //   imageBuffer = await image
+      //     .resize({
+      //       width: newWidth,
+      //       height: newHeight,
+      //       withoutEnlargement: true,
+      //     })
+      //     .toFormat(format, sharpOption)
+      //     .toBuffer();
+      // } else if (h) {
+      //   const newHeight = parseInt(h);
+      //   const newWidth = Math.round(
+      //     (newHeight / metadata.height) * metadata.width
+      //   );
+      //   imageBuffer = await image
+      //     .resize({
+      //       width: newWidth,
+      //       height: newHeight,
+      //       withoutEnlargement: true,
+      //     })
+      //     .toFormat(format, sharpOption)
+      //     .toBuffer();
+      // }
+      else {
+        // imageBuffer = await image.toFormat(format, sharpOption).toBuffer();
+        return res.sendFile(imagePath);
       }
 
       RedisCache.redisClient().setEx(
