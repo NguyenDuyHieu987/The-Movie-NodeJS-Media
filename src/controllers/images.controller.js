@@ -35,7 +35,7 @@ class ImageController {
       }
 
       const image = sharp(imagePath, { unlimited: false });
-      const metadata = await image.metadata();
+      // const metadata = await image.metadata();
       const sharpOption = {
         quality: quality,
         chromaSubsampling: '4:4:4',
