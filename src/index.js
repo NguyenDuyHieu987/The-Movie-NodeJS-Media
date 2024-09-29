@@ -40,7 +40,7 @@ app.use(
       // www
       'https://www.' + process.env.CLIENT_DOMAIN,
     ],
-    credentials: true,
+    credentials: false,
   })
 );
 app.use(favicon(path.join(__dirname, 'src/public', 'favicon.ico')));
