@@ -105,7 +105,7 @@ class ImageController {
         imageBuffer.toString('binary')
       );
 
-      res.type('image/jpeg');
+      res.type(`image/${format}`);
       res.send(imageBuffer);
     } catch (err) {
       // res.status(500).send(`Something went wrong.<br/>${err}`);
