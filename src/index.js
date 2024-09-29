@@ -30,18 +30,19 @@ process.on('exit', () => {
 const app = express();
 
 app.use(
-  cors({
-    origin: [
-      process.env.NODE_ENV != 'production' && 'http://localhost:3000',
-      process.env.NODE_ENV != 'production' && 'http://localhost:8080',
-      'https://' + process.env.CLIENT_DOMAIN,
-      'https://dash.' + process.env.CLIENT_DOMAIN,
-      'https://dashboard.' + process.env.CLIENT_DOMAIN,
-      // www
-      'https://www.' + process.env.CLIENT_DOMAIN,
-    ],
-    credentials: false,
-  })
+  // cors({
+  //   origin: [
+  //     process.env.NODE_ENV != 'production' && 'http://localhost:3000',
+  //     process.env.NODE_ENV != 'production' && 'http://localhost:8080',
+  //     'https://' + process.env.CLIENT_DOMAIN,
+  //     'https://dash.' + process.env.CLIENT_DOMAIN,
+  //     'https://dashboard.' + process.env.CLIENT_DOMAIN,
+  //     // www
+  //     'https://www.' + process.env.CLIENT_DOMAIN,
+  //   ],
+  //   credentials: true,
+  // })
+  cors()
 );
 app.use(favicon(path.join(__dirname, 'src/public', 'favicon.ico')));
 app.use('/static', express.static(path.join(__dirname, 'src/public')));
