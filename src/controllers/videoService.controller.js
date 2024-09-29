@@ -61,14 +61,14 @@ class VideoServiceController {
         })
         .on('end', () => {
           res.json({
-            success: false,
+            success: true,
             message: 'Video uploaded successfully!',
             file: req.file,
           });
         })
         .on('error', (err) => {
           res.json({
-            success: true,
+            success: false,
             message: 'Video upload failed!',
           });
         })
