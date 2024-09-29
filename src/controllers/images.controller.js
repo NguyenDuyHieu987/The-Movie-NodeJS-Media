@@ -25,8 +25,9 @@ class ImageController {
       const cacheKey = req.originalUrl || `${type}-${name}-${w}x${h}`;
       const cachedImage = await RedisCache.redisClient().get(cacheKey);
 
+      res.type(`image/${format}`);
+
       if (cachedImage) {
-        res.type('image/jpeg');
         return res.send(Buffer.from(cachedImage, 'binary'));
       }
 
@@ -105,7 +106,6 @@ class ImageController {
         imageBuffer.toString('binary')
       );
 
-      res.type(`image/${format}`);
       res.send(imageBuffer);
     } catch (err) {
       // res.status(500).send(`Something went wrong.<br/>${err}`);
