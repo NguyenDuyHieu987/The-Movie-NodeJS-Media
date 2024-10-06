@@ -2,30 +2,49 @@ import createHttpError from 'http-errors';
 import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
+import util from 'util';
 import {
   generateRandomString,
   getFormattedNumberDateTime,
 } from '../utils/index.js';
 import SocketService from '../config/websocket/index.js';
+import { uploadVideo } from '../utils/storage.js';
 
 const __dirname = path.resolve();
+
+const uploadFile = util.promisify(uploadVideo.single('video'));
 
 class VideoServiceController {
   async upload(req, res, next) {
     try {
+      const folder =
+        req.body?.folder || req.params?.folder || req.query?.folder;
+
+      if (!folder) {
+        return next(createHttpError(500, 'Please provide folder'));
+      }
+
+      await uploadFile(req, res);
+
       const extName = path.extname(req.file.filename);
       const fileName = req.file.filename.replace(extName, '');
-      const originalFileName = req.file.originalname.replace(extName, '');
+      const originalFileName = req.file.originalname
+        .replace(extName, '')
+        .replaceAll(' ', '_');
 
       const videoPath = req.file.path;
 
-      const outputDir = path.join(
-        __dirname,
-        `src/public/videosTest`,
+      const videoDirectory = path.join(
         // `${getFormattedNumberDateTime({ from: 'day', to: '-' })}`,
         `${originalFileName}` +
           '_' +
           getFormattedNumberDateTime({ to: 'seconds' })
+      );
+
+      const outputDir = path.join(
+        __dirname,
+        `src/public/videos/${folder}`,
+        videoDirectory
       );
 
       if (!fs.existsSync(outputDir)) {
@@ -41,10 +60,10 @@ class VideoServiceController {
         );
       }
 
+      const videoName = `${originalFileName}_${generateRandomString(20)}_.m3u8`;
+
       ffmpegTool
-        .output(
-          `${outputDir}/${originalFileName}_${generateRandomString(20)}_.m3u8`
-        )
+        .output(`${outputDir}/${videoName}`)
         .addOptions([
           '-profile:v baseline', // Tương thích cho phát trực tuyến
           '-level 3.0',
@@ -64,6 +83,7 @@ class VideoServiceController {
             success: true,
             message: 'Video uploaded successfully!',
             file: req.file,
+            video_path: `${folder}/${videoDirectory}/${videoName}`,
           });
         })
         .on('error', (err) => {

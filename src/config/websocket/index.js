@@ -18,7 +18,7 @@ class SocketService {
         cors: {
           origin: [
             process.env.NODE_ENV != 'production' && 'http://localhost:3000',
-            process.env.NODE_ENV != 'production' && 'http://localhost:8080',
+            process.env.NODE_ENV != 'production' && 'http://localhost:5173',
             'https://' + process.env.CLIENT_DOMAIN,
             'https://dash.' + process.env.CLIENT_DOMAIN,
             'https://dashboard.' + process.env.CLIENT_DOMAIN,
@@ -34,10 +34,10 @@ class SocketService {
 
   initializeSocketEvents() {
     this.io.on('connection', (socket) => {
-      console.log('Client connected:', socket.id);
+      // console.log('Client connected:', socket.id);
 
       socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
+        // console.log('Client disconnected:', socket.id);
       });
     });
   }

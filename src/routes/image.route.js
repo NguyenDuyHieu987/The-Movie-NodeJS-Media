@@ -10,15 +10,15 @@ Get.get('/:type/*', Image.Get);
 const Service = express.Router();
 
 Service.post(
-  '/:folder/upload',
-  uploadImage.single('image'),
+  '/upload',
+  // uploadImage.single('image'),
   ImageService.upload
 );
 
-Service.post(
-  '/upload',
-  uploadArrayImage.array('images', 10),
-  ImageService.upload
-);
+// Service.post(
+//   '/upload',
+//   uploadArrayImage.array('images', 10),
+//   ImageService.upload
+// );
 
 export default { Get, Service };

@@ -1,6 +1,6 @@
 import { isHttpError } from 'http-errors';
 
-const ErrorHandler = (error, req, res, next) => {
+const errorHandler = (error, req, res, next) => {
   let statusCode = error?.status || error?.statusCode || 500;
   let errorMessage =
     error?.message || error?.body?.message || 'An unknown error occurred';
@@ -11,9 +11,9 @@ const ErrorHandler = (error, req, res, next) => {
   }
 
   return res.status(statusCode).json({
-    status: statusCode,
+    statusCode,
     message: errorMessage,
   });
 };
 
-export default ErrorHandler;
+export { errorHandler };

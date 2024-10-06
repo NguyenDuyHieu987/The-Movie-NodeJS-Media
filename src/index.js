@@ -33,7 +33,7 @@ app.use(
   cors({
     origin: [
       process.env.NODE_ENV != 'production' && 'http://localhost:3000',
-      process.env.NODE_ENV != 'production' && 'http://localhost:8080',
+      process.env.NODE_ENV != 'production' && 'http://localhost:5173',
       'https://' + process.env.CLIENT_DOMAIN,
       'https://dash.' + process.env.CLIENT_DOMAIN,
       'https://dashboard.' + process.env.CLIENT_DOMAIN,
@@ -55,10 +55,9 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: true,
+    extended: false,
   })
 );
-
 // app.use(multer().any());
 
 const server = http.createServer(app);

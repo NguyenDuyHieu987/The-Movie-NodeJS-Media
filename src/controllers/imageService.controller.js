@@ -2,13 +2,24 @@ import createHttpError from 'http-errors';
 import fs from 'fs';
 import path from 'path';
 import Vibrant from 'node-vibrant';
+import util from 'util';
+import { uploadImage } from '../utils/storage.js';
+
 const __dirname = path.resolve();
+
+const uploadFile = util.promisify(uploadImage.single('image'));
 
 class ImageServiceController {
   async upload(req, res, next) {
     try {
       const folder =
         req.body?.folder || req.params?.folder || req.query?.folder;
+
+      if (!folder) {
+        return next(createHttpError(500, 'Please provide folder'));
+      }
+
+      await uploadFile(req, res);
 
       const files = req.files || [req.file];
       // const uploadedFiles = files.map((file) => file.filename);

@@ -10,6 +10,10 @@ Get.get('/:type/*', Video.get);
 
 const Service = express.Router();
 
-Service.post('/upload', uploadVideo.single('video'), VideoService.upload);
+Service.post(
+  '/upload',
+  //  uploadVideo.single('video'),
+  VideoService.upload
+);
 
 export default { Get, Service };

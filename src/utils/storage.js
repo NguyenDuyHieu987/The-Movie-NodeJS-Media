@@ -1,4 +1,5 @@
 import multer from 'multer';
+import createHttpError from 'http-errors';
 import path from 'path';
 import fs from 'fs';
 import { generateRandomString, getFormattedNumberDateTime } from './index.js';
@@ -7,6 +8,10 @@ const __dirname = path.resolve();
 const storageImage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folder = req.body?.folder || req.params?.folder || req.query?.folder;
+
+    // if (!folder) {
+    //   return createHttpError(500, 'Please provide folder');
+    // }
 
     const uploadPath = path.join(__dirname, 'src/public/imagesTest', folder);
     if (!fs.existsSync(uploadPath)) {
@@ -78,20 +83,35 @@ export const uploadArrayImage = multer({
 
 const storageVideo = multer.diskStorage({
   destination: function (req, file, cb) {
+    const folder = req.body?.folder || req.params?.folder || req.query?.folder;
+
+    // if (!folder) {
+    //   return createHttpError(500, 'Please provide folder');
+    // }
+
     const extName = path.extname(file.originalname);
-    const originalFileName = file.originalname.replace(extName, '');
+    const originalFileName = file.originalname
+      .replace(extName, '')
+      .replaceAll(' ', '_');
 
     const now = new Date();
 
+    // const uploadPath = path.join(
+    //   __dirname,
+    //   `src/public/videos-storage`,
+    //   `${now.getFullYear()}`,
+    //   `${String(now.getMonth() + 1).padStart(2, '0')}`,
+    //   originalFileName +
+    //     '-' +
+    //     getFormattedNumberDateTime({ from: 'day', to: 'seconds', join: '.' })
+    // );
+
     const uploadPath = path.join(
       __dirname,
-      'src/public/videos-storage',
-      `${now.getFullYear()}`,
-      `${String(now.getMonth() + 1).padStart(2, '0')}`,
-      originalFileName +
-        '-' +
-        getFormattedNumberDateTime({ from: 'day', to: 'seconds', join: '.' })
+      `src/public/videos-storage/${folder}`,
+      originalFileName + '_' + getFormattedNumberDateTime({ to: 'seconds' })
     );
+
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -103,7 +123,10 @@ const storageVideo = multer.diskStorage({
     const extName = path.extname(file.originalname);
     cb(
       null,
-      file.originalname.replace(extName, '') + '_' + uniqueSuffix + extName
+      file.originalname.replace(extName, '').replaceAll(' ', '_') +
+        '_' +
+        uniqueSuffix +
+        extName
     );
   },
 });

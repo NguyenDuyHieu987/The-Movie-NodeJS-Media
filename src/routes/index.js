@@ -2,8 +2,7 @@ import apicache from 'apicache';
 import createHttpError from 'http-errors';
 import videosRouter from './video.route.js';
 import imageRouter from './image.route.js';
-import ErrorHandler from '../controllers/error.controller.js';
-import { proxyHandler } from '../middlewares/index.js';
+import middleware, { proxyHandler } from '../middlewares/index.js';
 import RedisCache from '../config/redis/index.js';
 
 let cache = apicache.middleware;
@@ -28,8 +27,10 @@ export default function route(app) {
     videosRouter.Get
   );
   // app.use(proxyHandler);
-  app.use('/image', imageRouter.Service);
-  app.use('/video', videosRouter.Service);
+  middleware(app, () => {
+    app.use('/image', imageRouter.Service);
+    app.use('/video', videosRouter.Service);
+  });
   app.all('*', (req, res, next) => {
     return next(
       createHttpError(
@@ -38,5 +39,12 @@ export default function route(app) {
       )
     );
   });
-  app.use(ErrorHandler);
+  app.all('*', (req, res, next) => {
+    return next(
+      createHttpError(
+        404,
+        `Can't find the route: ${req.originalUrl} on server!`
+      )
+    );
+  });
 }
