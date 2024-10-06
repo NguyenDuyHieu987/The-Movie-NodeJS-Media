@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import util from 'util';
+import slugify from 'slugify';
 import {
   generateRandomString,
   getFormattedNumberDateTime,
@@ -29,7 +30,7 @@ class VideoServiceController {
 
       const extName = path.extname(req.file.filename);
       const fileName = req.file.filename.replace(extName, '');
-      const originalFileName = sanitizeFileName(
+      const originalFileName = slugify(
         req.file.originalname.replace(extName, '').replaceAll(' ', '_')
       );
 

@@ -2,6 +2,7 @@ import multer from 'multer';
 import createHttpError from 'http-errors';
 import path from 'path';
 import fs from 'fs';
+import slugify from 'slugify';
 import {
   generateRandomString,
   getFormattedNumberDateTime,
@@ -113,7 +114,7 @@ const storageVideo = multer.diskStorage({
     const uploadPath = path.join(
       __dirname,
       `src/public/videos-storage/${folder}`,
-      sanitizeFileName(originalFileName) +
+      slugify(originalFileName) +
         '_' +
         getFormattedNumberDateTime({ to: 'seconds' })
     );
@@ -129,9 +130,7 @@ const storageVideo = multer.diskStorage({
     const extName = path.extname(file.originalname);
     cb(
       null,
-      sanitizeFileName(
-        file.originalname.replace(extName, '').replaceAll(' ', '_')
-      ) +
+      slugify(file.originalname.replace(extName, '').replaceAll(' ', '_')) +
         '_' +
         uniqueSuffix +
         extName
