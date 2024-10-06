@@ -2,7 +2,11 @@ import multer from 'multer';
 import createHttpError from 'http-errors';
 import path from 'path';
 import fs from 'fs';
-import { generateRandomString, getFormattedNumberDateTime } from './index.js';
+import {
+  generateRandomString,
+  getFormattedNumberDateTime,
+  sanitizeFileName,
+} from './index.js';
 const __dirname = path.resolve();
 
 const storageImage = multer.diskStorage({
@@ -109,7 +113,9 @@ const storageVideo = multer.diskStorage({
     const uploadPath = path.join(
       __dirname,
       `src/public/videos-storage/${folder}`,
-      originalFileName + '_' + getFormattedNumberDateTime({ to: 'seconds' })
+      sanitizeFileName(originalFileName) +
+        '_' +
+        getFormattedNumberDateTime({ to: 'seconds' })
     );
 
     if (!fs.existsSync(uploadPath)) {
@@ -123,7 +129,9 @@ const storageVideo = multer.diskStorage({
     const extName = path.extname(file.originalname);
     cb(
       null,
-      file.originalname.replace(extName, '').replaceAll(' ', '_') +
+      sanitizeFileName(
+        file.originalname.replace(extName, '').replaceAll(' ', '_')
+      ) +
         '_' +
         uniqueSuffix +
         extName

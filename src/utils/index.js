@@ -135,3 +135,8 @@ export function getFormattedNumberDateTime(
 
   return resultArray.join(join);
 }
+
+export function sanitizeFileName(fileName) {
+  // Thay thế tất cả các ký tự đặc biệt bằng ký tự rỗng
+  return fileName.replace(/[^\w\-\.]/g, '');
+}

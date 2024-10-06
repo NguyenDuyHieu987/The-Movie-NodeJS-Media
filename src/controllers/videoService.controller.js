@@ -6,6 +6,7 @@ import util from 'util';
 import {
   generateRandomString,
   getFormattedNumberDateTime,
+  sanitizeFileName,
 } from '../utils/index.js';
 import SocketService from '../config/websocket/index.js';
 import { uploadVideo } from '../utils/storage.js';
@@ -28,9 +29,9 @@ class VideoServiceController {
 
       const extName = path.extname(req.file.filename);
       const fileName = req.file.filename.replace(extName, '');
-      const originalFileName = req.file.originalname
-        .replace(extName, '')
-        .replaceAll(' ', '_');
+      const originalFileName = sanitizeFileName(
+        req.file.originalname.replace(extName, '').replaceAll(' ', '_')
+      );
 
       const videoPath = req.file.path;
 
