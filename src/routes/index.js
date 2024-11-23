@@ -39,12 +39,4 @@ export default function route(app) {
       )
     );
   });
-  app.all('*', (req, res, next) => {
-    return next(
-      createHttpError(
-        404,
-        `Can't find the route: ${req.originalUrl} on server!`
-      )
-    );
-  });
 }
