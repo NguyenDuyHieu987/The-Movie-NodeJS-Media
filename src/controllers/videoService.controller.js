@@ -59,6 +59,7 @@ class VideoServiceController {
       if (process.env.NODE_ENV == 'development') {
         ffmpegTool.setFfmpegPath(
           'C:\\Users\\ddom6\\Downloads\\ffmpeg-2024-09-19-git-0d5b68c27c-full_build\\bin\\ffmpeg.exe'
+          // 'C:\\Users\\ddom6\\Downloads\\ffmpeg-7.1-full_build\\bin\\ffmpeg.exe'
         );
       }
 
@@ -80,12 +81,24 @@ class VideoServiceController {
             percent: +percent,
           });
         })
-        .on('end', () => {
-          res.json({
-            success: true,
-            message: 'Video uploaded successfully!',
-            file: req.file,
-            video_path: `${folder}/${videoDirectory}/${videoName}`,
+        .on('end', async () => {
+          // const metadata = ffmpegTool.ffprobe();
+
+          ffmpegTool.ffprobe((err, metadata) => {
+            if (err) {
+              console.error('Error reading video metadata:', err);
+              return;
+            }
+
+            req.file.metadata = metadata;
+            req.file.duration = metadata.format.duration;
+
+            res.json({
+              success: true,
+              message: 'Video uploaded successfully!',
+              file: req.file,
+              video_path: `${folder}/${videoDirectory}/${videoName}`,
+            });
           });
         })
         .on('error', (err) => {
