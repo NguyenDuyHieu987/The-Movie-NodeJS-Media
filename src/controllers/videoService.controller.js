@@ -55,6 +55,7 @@ class VideoServiceController {
 
       // Dùng FFmpeg để chuyển đổi video MP4 sang HLS (.m3u8 và .ts)
       const ffmpegTool = ffmpeg(videoPath);
+      const ffmpegTool1 = ffmpeg(videoPath);
 
       if (process.env.NODE_ENV == 'development') {
         ffmpegTool.setFfmpegPath(
@@ -76,22 +77,26 @@ class VideoServiceController {
         req.file.metadata = metadata;
         req.file.duration = metadata.format.duration;
 
+        var still_path = `${generateRandomString(30)}.jpg`;
+        ffmpegTool1.thumbnail({
+          // timemarks: ['1'],
+          timestamps: [1],
+          filename: still_path,
+          folder: path.join(__dirname, `src/public/imagesTest/still`),
+          // size: '320x240',
+        });
+
         // const timestamps = Array.from(
         //   { length: Math.ceil(metadata.format.duration) },
         //   (_, i) => i
         // );
 
-        ffmpegTool
-          .thumbnails({
-            timemarks: ['1', '2', '3'],
-            // timestamps: [1],
-            filename: `preview_%s.jpg`,
-            folder: path.join(__dirname, `src/public/imagesTest/still1`),
-            size: '320x240',
-          })
-          .on('progress', (progress) => {
-            console.log(progress);
-          });
+        // ffmpegTool1.thumbnails({
+        //   timestamps: timestamps,
+        //   filename: `preview_%s.jpg`,
+        //   folder: path.join(__dirname, `src/public/imagesTest/preview`),
+        //   // size: '320x240',
+        // });
 
         ffmpegTool
           .output(`${outputDir}/${videoName}`)
@@ -103,18 +108,6 @@ class VideoServiceController {
             '-hls_list_size 0', // Lưu toàn bộ danh sách
             '-f hls', // Định dạng đầu ra là HLS
           ])
-          // .screenshot({
-          //   timestamps: [1],
-          //   filename: `preview_%s.jpg`,
-          //   folder: path.join(__dirname, `src/public/imagesTest/still1`),
-          //   size: '320x240',
-          // })
-          // .screenshots({
-          //   timestamps: [0, 1, 2],
-          //   filename: `preview_%s.jpg`,
-          //   folder: path.join(__dirname, `src/public/imagesTest/preview`),
-          //   size: '320x240',
-          // })
           .on('progress', (progress) => {
             const percent = (progress.percent || 0).toFixed(2);
             SocketService.emitToAll('upload-video-progress', {
@@ -127,6 +120,7 @@ class VideoServiceController {
               message: 'Video uploaded successfully!',
               file: req.file,
               video_path: `${folder}/${videoDirectory}/${videoName}`,
+              still_path,
             });
           })
           .on('error', (err) => {
