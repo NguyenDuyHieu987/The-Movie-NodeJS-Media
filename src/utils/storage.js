@@ -18,7 +18,15 @@ const storageImage = multer.diskStorage({
     //   return createHttpError(500, 'Please provide folder');
     // }
 
-    const uploadPath = path.join(__dirname, 'src/public/imagesTest', folder);
+    var imageFolder = folder.startsWith('user_avatar')
+      ? 'images'
+      : 'imagesTest';
+
+    const uploadPath = path.join(
+      __dirname,
+      `src/public/${imageFolder}`,
+      folder
+    );
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
