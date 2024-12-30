@@ -58,11 +58,11 @@ class VideoServiceController {
 
       if (process.env.NODE_ENV == 'development') {
         ffmpegTool.setFfmpegPath(
-          'C:\\Users\\ddom6\\Downloads\\ffmpeg-2024-09-19-git-0d5b68c27c-full_build\\bin\\ffmpeg.exe'
+          'C:\\Users\\ddom6\\Downloads\\ffmpeg-2024-12-27-git-5f38c82536-full_build\\bin\\ffmpeg.exe'
           // 'C:\\Users\\ddom6\\Downloads\\ffmpeg-7.1-full_build\\bin\\ffmpeg.exe'
         );
         ffmpegTool.setFfprobePath(
-          'C:\\Users\\ddom6\\Downloads\\ffmpeg-2024-09-19-git-0d5b68c27c-full_build\\bin\\ffprobe.exe'
+          'C:\\Users\\ddom6\\Downloads\\ffmpeg-2024-12-27-git-5f38c82536-full_build\\bin\\ffprobe.exe'
         );
       }
 
@@ -81,12 +81,17 @@ class VideoServiceController {
         //   (_, i) => i
         // );
 
-        // ffmpegTool.thumbnails({
-        //   timestamps: [1],
-        //   filename: `preview_%s.jpg`,
-        //   folder: path.join(__dirname, `src/public/imagesTest/still1`),
-        //   size: '320x240',
-        // });
+        ffmpegTool
+          .thumbnails({
+            timemarks: ['1', '2', '3'],
+            // timestamps: [1],
+            filename: `preview_%s.jpg`,
+            folder: path.join(__dirname, `src/public/imagesTest/still1`),
+            size: '320x240',
+          })
+          .on('progress', (progress) => {
+            console.log(progress);
+          });
 
         ffmpegTool
           .output(`${outputDir}/${videoName}`)
