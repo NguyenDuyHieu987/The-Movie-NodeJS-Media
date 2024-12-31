@@ -78,11 +78,18 @@ class VideoServiceController {
         req.file.duration = metadata.format.duration;
 
         var still_path = `${generateRandomString(30)}.jpg`;
+        var stillUploadPath = path.join(
+          __dirname,
+          `src/public/imagesTest/still`
+        );
+        if (!fs.existsSync(stillUploadPath)) {
+          fs.mkdirSync(stillUploadPath, { recursive: true });
+        }
         ffmpegTool1.thumbnail({
           // timemarks: ['1'],
           timestamps: [1],
           filename: still_path,
-          folder: path.join(__dirname, `src/public/imagesTest/still`),
+          folder: stillUploadPath,
           // size: '320x240',
         });
 
